@@ -1,0 +1,545 @@
+#:import Factory kivy.factory.Factory
+#:import Image kivy.uix.image
+
+WindowManager:
+    HomeScreen:
+    MenuScreen:
+    ExScreen:
+    HowToScreen:
+    LoginScreen:
+    InvalidScreen:
+    QRcodeScreen:
+    EnterIDScreen:
+    ReadyScreen:
+    ProcessScreen:
+    PointScreen:
+    
+
+<HomeScreen>:
+    Image:
+        source: "HomeScreen.png"
+
+    Label:
+        text: "%s" % (root.general_plastic_cc_cap)
+        font_name: "ChulabhornLikitText-Bold.otf"
+        font_size:"18sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 50, 180
+
+    Label:
+        text: "%s" % (root.clear_plastic_cc_cap)
+        font_name: "ChulabhornLikitText-Bold.otf"
+        font_size:"18sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 250, 180
+
+    Label:
+        text: "%s" % (root.canned_cc_cap)
+        font_name: "ChulabhornLikitText-Bold.otf"
+        font_size:"18sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 450, 180
+
+    Label:
+        text: "%s" % (root.unknown_type_cc_cap)
+        font_name: "ChulabhornLikitText-Bold.otf"
+        font_size:"18sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 650, 180
+
+    Button: 
+        size_hint: 0.21, 0.21
+        pos: 325, 48
+        background_normal: 'start.png'
+        background_down: 'start.png'
+        # background_down: 'start_down.png'
+        on_release: root.btn_start()
+
+
+<MenuScreen>:
+    Image:
+        source: "MenuScreen.png"
+
+    Label:
+        text: "%s" % (root.gennertal_plastic_point)
+        font_name: "ChulabhornLikitText-Bold.otf"
+        font_size:"18sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 50, 170
+
+    Label:
+        text: "%s" % (root.clear_plastic_point)
+        font_name: "ChulabhornLikitText-Bold.otf"
+        font_size:"18sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 250, 170
+
+    Label:
+        text: "%s" % (root.caned_point)
+        font_name: "ChulabhornLikitText-Bold.otf"
+        font_size:"18sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 460, 170
+
+    Label:
+        text: "%s" % (root.unknown_point)
+        font_name: "ChulabhornLikitText-Bold.otf"
+        font_size:"18sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 655, 170
+
+    Button: 
+        size_hint: 0.19, 0.20
+        pos: 228, 61
+        background_normal: 'Ex.png'
+        background_down: 'Ex.png'
+        # background_down: 'Ex_down.png'
+        on_release: root.btn_ex()
+
+    Button: 
+        size_hint: 0.19, 0.20
+        pos: 426, 61
+        background_normal: 'HowTo.png'
+        background_down: 'HowTo.png'
+        # background_down: 'HowTo_down.png'
+        on_release: root.btn_howto()
+
+    Button:
+        size_hint: 0.19, 0.20
+        pos: 325, -8
+        background_normal: 'btn_back.png'
+        background_down: 'btn_back.png'
+        on_release: root.btn_back()
+
+
+<ExScreen>:
+    Image:
+        source: "ExScreen.png"
+
+    Button: 
+        size_hint: 0.17, 0.25
+        pos: 200, 220
+        background_normal: 'CollectIcon.png'
+        background_down: 'CollectIcon_down.png'
+        on_release: root.btn_collect()
+
+    Button: 
+        size_hint: 0.17, 0.25
+        pos: 440, 220
+        background_normal: 'DonateIcon.png'
+        background_down: 'DonateIcon_down.png'
+        on_release: root.btn_donate()
+
+    Button:
+        size_hint: 0.19, 0.20
+        pos: 315, 80
+        background_normal: 'btn_back.png'
+        background_down: 'btn_back.png'
+        on_release: root.btn_back()
+
+
+<HowToScreen>:
+    Image:
+        source: "HowToScreen.png"
+
+    Button: 
+        size_hint: 0.19, 0.20
+        pos: 320, 40
+        background_normal: 'btn_back.png'
+        background_down: 'btn_back.png'
+        on_release: root.btn_back()
+
+<LoginScreen>:
+    Image:
+        source: "LoginScreen.png"
+
+    Button: 
+        size_hint: 0.17, 0.25
+        pos: 200, 220
+        background_normal: 'QRcodeIcon.png'
+        background_down: 'QRcodeIcon_down.png'
+        on_release: root.btn_byQRcode()
+
+    Button: 
+        size_hint: 0.17, 0.25
+        pos: 440, 220
+        background_normal: 'IDIcon.png'
+        background_down: 'IDIcon_down.png'
+        on_release: root.btn_byID()
+
+    Button:
+        size_hint: 0.19, 0.20
+        pos: 315, 80
+        background_normal: 'btn_back.png'
+        background_down: 'btn_back.png'
+        on_release: root.btn_back()   
+
+<InvalidScreen>:
+    Image:
+        source: "InvalidScreen.png"
+
+    Button:
+        size_hint: 0.19, 0.20
+        pos: 325, 60
+        background_normal: 'btn_back.png'
+        background_down: 'btn_back.png'
+        on_release: root.btn_back() 
+
+
+<QRcodeScreen>:
+    Image: 
+        source: "QRcodeScreen.png"
+
+    Button: 
+        size_hint: 0.19, 0.20
+        pos: 325, 60
+        background_normal: 'btn_back.png'
+        background_down: 'btn_back.png'
+        on_release: root.btn_back() 
+
+<EnterIDScreen>:
+    Image:
+        source: "EnterIDScreen.png"
+
+    Label:
+        text: "%s" % (root.sid)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"50sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 230, 275
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 430, 300
+        background_normal: '1.png'
+        background_down: '1_down.png'
+        on_release: root.one()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 500, 300
+        background_normal: '2.png'
+        background_down: '2_down.png'
+        on_release: root.two()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 570, 300
+        background_normal: '3.png'
+        background_down: '3_down.png'
+        on_release: root.three()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 430, 230
+        background_normal: '4.png'
+        background_down: '4_down.png'
+        on_release: root.four()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 500, 230
+        background_normal: '5.png'
+        background_down: '5_down.png'
+        on_release: root.five()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 570, 230
+        background_normal: '6.png'
+        background_down: '6_down.png'
+        on_release: root.six()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 430, 160
+        background_normal: '7.png'
+        background_down: '7_down.png'
+        on_release: root.seven()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 500, 160
+        background_normal: '8.png'
+        background_down: '8_down.png'
+        on_release: root.eight()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 570, 160
+        background_normal: '9.png'
+        background_down: '9_down.png'
+        on_release: root.nine()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 430, 90
+        background_normal: 'D.png'
+        background_down: 'D_down.png'
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 500, 90
+        background_normal: '0.png'
+        background_down: '0_down.png'
+        on_release: root.zero()
+
+    Button: 
+        size_hint: 0.09, 0.13
+        pos: 570, 90
+        background_normal: '#.png'
+        background_down: '#_down.png'
+
+    Button: 
+        size_hint: 0.14, 0.09
+        pos: 150, 210
+        background_normal: 'delM.png'
+        background_down: 'delM_down.png'
+        on_release: root.delete()
+
+    Button: 
+        size_hint: 0.14, 0.09
+        pos: 300, 210
+        background_normal: 'enterM.png'
+        background_down: 'enterM_down.png'
+        on_release: root.ok()
+
+    Button: 
+        size_hint: 0.17, 0.19
+        pos: 220, 120
+        background_normal: 'btn_back.png'
+        background_down: 'btn_back.png'
+        on_release: root.btn_back() 
+
+
+<ReadyScreen>:
+    Image:
+        source: "ReadyScreen.png"
+
+    Button: 
+        size_hint: 0.16, 0.18
+        pos: 50, 18
+        background_normal: 'collect.png'
+        background_down: 'collect.png'
+        on_release: root.collect()
+            # root.startprocess()
+        # on_press: 
+            # root.startprocess()
+            # root.collect()
+
+    Button: 
+        size_hint: 0.16, 0.18
+        pos: 200, 18
+        background_normal: 'lookscore.png'
+        background_down: 'lookscore.png'
+        on_release: root.lookscore()
+
+    Label:
+        text: "%s" % (root.Date)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 105, 425
+
+    Label:
+        text: "%s" % (root.Time)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 240, 425
+
+    Label:
+        text: "%s" % (root.User)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 180, 345
+
+    Label:
+        text: "%s" % (root.general_plastic_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 375
+
+    Label:
+        text: "%s" % (root.clear_plastic_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 285
+
+    Label:
+        text: "%s" % (root.caned_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 195
+
+    Label:
+        text: "%s" % (root.unknown_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 105
+
+    Label:
+        text: "%s" % (root.sum_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 550, 20
+    
+    Label:
+        text: "%s" % (root.time_left)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 135, 100
+
+
+<ProcessScreen>:
+    Image:
+        source: "ProcessScreen.png"
+
+    Button: 
+        size_hint: 0.18, 0.12
+        pos: 26, 24
+        background_normal: 'collect_blind.png'
+        background_down: 'collect_blind.png'
+
+    Button: 
+        size_hint: 0.18, 0.12
+        pos: 197, 24
+        background_normal: 'lookscore_blind.png'
+        background_down: 'lookscore_blind.png'
+
+    Label:
+        text: "%s" % (root.Date)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 105, 425
+
+    Label:
+        text: "%s" % (root.Time)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 240, 425
+
+    Label:
+        text: "%s" % (root.User)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 180, 345
+
+    Label:
+        text: "%s" % (root.general_plastic_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 375
+
+    Label:
+        text: "%s" % (root.clear_plastic_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 285
+
+    Label:
+        text: "%s" % (root.caned_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 195
+
+    Label:
+        text: "%s" % (root.unknown_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 105
+
+    Label:
+        text: "%s" % (root.sum_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 550, 20
+
+    Label:
+        text: "%s" % (root.time_left)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 135, 100
+
+
+<PointScreen>:
+    Image:
+        source: "PointScreen.png"
+
+    Button: 
+        size_hint: 0.18, 0.20
+        pos: 320, 120
+        background_normal: 'confirm.png'
+        background_down: 'confirm.png'
+        on_release: root.btn_home()
+
+    Label:
+        text: "%s" % (root.total_point)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"40sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 350, 245

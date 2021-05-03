@@ -1,0 +1,13 @@
+
+# Select
+แสดงคะแนนแต่ละคลาส 	class.class_name, class.point
+ตรวจสอบผู้ใช้ (login) student_id.Student, first_name.Student
+
+# Insert
+สร้าง 	session_id
+ทีละชิ้น 	insert trash
+
+# update
+เมื่อหมด 	t_session
+อัพเดทคะแนนรวม	Student.total_point
+
