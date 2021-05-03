@@ -385,10 +385,10 @@ class MenuScreen(Screen):
         super(MenuScreen, self).__init__(**kwargs)
         names, points = get_data_type()
         
-        self.gennertal_plastic_point = names[3] + '\n' + str(points[1]) + ' คะแนน'
-        self.clear_plastic_point = names[2] + '\n  ' + str(points[1]) + ' คะแนน'
-        self.caned_point = '  ' + names[1] + '\n' + str(points[2]) + ' คะแนน'
-        self.unknown_point = names[0] + '\n  '+str(points[3]) + ' คะแนน'
+        self.gennertal_plastic_point = names[2] + '\n' + str(points[2]) + ' คะแนน'
+        self.clear_plastic_point = names[3] + '\n  ' + str(points[3]) + ' คะแนน'
+        self.caned_point = '  ' + names[1] + '\n' + str(points[1]) + ' คะแนน'
+        self.unknown_point = names[0] + '\n  '+str(points[0]) + ' คะแนน'
 
     def btn_ex(self):
         sm.transition.direction = "left"
@@ -421,8 +421,8 @@ class HomeScreen(Screen):
         # read capacity form sensor
         self.unknown_type_cc_cap = 'ไม่ทราบประเภท '+ str(unknown_type_cc) +' %'
         self.canned_cc_cap = 'กระป๋อง '+ str(canned_cc) +' %'
-        self.clear_plastic_cc_cap = 'พลาสติกทั่วไป '+ str(clear_plastic_cc) +' %'
-        self.general_plastic_cc_cap = 'พลาสติกใส '+ str(general_plastic_cc) +' %'
+        self.clear_plastic_cc_cap = 'พลาสติกใส '+ str(clear_plastic_cc) +' %'
+        self.general_plastic_cc_cap = 'พลาสติกทั่วไป ' + str(general_plastic_cc) +' %'
 
         # update Tank capacity
         update_bin(unknown_type_cc, canned_cc, clear_plastic_cc, general_plastic_cc)
