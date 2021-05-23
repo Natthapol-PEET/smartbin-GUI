@@ -10,9 +10,13 @@ WindowManager:
     InvalidScreen:
     QRcodeScreen:
     EnterIDScreen:
-    ReadyScreen:
-    ProcessScreen:
+    ReadyScreen1:
+    ProcessScreen1:
+    ReadyScreen2:
+    ProcessScreen2:
     PointScreen:
+    thank_screen:
+    video_screen:
     
 
 <HomeScreen>:
@@ -20,7 +24,7 @@ WindowManager:
         source: "HomeScreen.png"
 
     Label:
-        text: "%s" % (root.general_plastic_cc_cap)
+        text: "%s" % (root.plastic_cc_cap)
         font_name: "ChulabhornLikitText-Bold.otf"
         font_size:"18sp"
         text_size: None, self.height
@@ -28,7 +32,7 @@ WindowManager:
         pos: 50, 180
 
     Label:
-        text: "%s" % (root.clear_plastic_cc_cap)
+        text: "%s" % (root.pet_cc_cap)
         font_name: "ChulabhornLikitText-Bold.otf"
         font_size:"18sp"
         text_size: None, self.height
@@ -36,7 +40,7 @@ WindowManager:
         pos: 250, 180
 
     Label:
-        text: "%s" % (root.canned_cc_cap)
+        text: "%s" % (root.can_cc_cap)
         font_name: "ChulabhornLikitText-Bold.otf"
         font_size:"18sp"
         text_size: None, self.height
@@ -44,7 +48,7 @@ WindowManager:
         pos: 450, 180
 
     Label:
-        text: "%s" % (root.unknown_type_cc_cap)
+        text: "%s" % (root.trash_cc_cap)
         font_name: "ChulabhornLikitText-Bold.otf"
         font_size:"18sp"
         text_size: None, self.height
@@ -65,7 +69,7 @@ WindowManager:
         source: "MenuScreen.png"
 
     Label:
-        text: "%s" % (root.gennertal_plastic_point)
+        text: "%s" % (root.plastic_point)
         font_name: "ChulabhornLikitText-Bold.otf"
         font_size:"18sp"
         text_size: None, self.height
@@ -73,7 +77,7 @@ WindowManager:
         pos: 50, 170
 
     Label:
-        text: "%s" % (root.clear_plastic_point)
+        text: "%s" % (root.pet_point)
         font_name: "ChulabhornLikitText-Bold.otf"
         font_size:"18sp"
         text_size: None, self.height
@@ -81,7 +85,7 @@ WindowManager:
         pos: 250, 170
 
     Label:
-        text: "%s" % (root.caned_point)
+        text: "%s" % (root.can_point)
         font_name: "ChulabhornLikitText-Bold.otf"
         font_size:"18sp"
         text_size: None, self.height
@@ -89,7 +93,7 @@ WindowManager:
         pos: 460, 170
 
     Label:
-        text: "%s" % (root.unknown_point)
+        text: "%s" % (root.plastic_point)
         font_name: "ChulabhornLikitText-Bold.otf"
         font_size:"18sp"
         text_size: None, self.height
@@ -322,20 +326,30 @@ WindowManager:
         on_release: root.btn_back() 
 
 
-<ReadyScreen>:
+<ReadyScreen1>:
     Image:
         source: "ReadyScreen.png"
 
     Button: 
         size_hint: 0.16, 0.18
         pos: 50, 18
-        background_normal: 'collect.png'
-        background_down: 'collect.png'
+        background_normal: 'btn_rubbish.png'
+        background_down: 'btn_rubbish.png'
         on_release: root.collect()
             # root.startprocess()
         # on_press: 
             # root.startprocess()
             # root.collect()
+
+    Label:
+        text: "%s" % (root.ready_text)
+        # text: "กดปุ่มแลกขยะ\nเพื่อเริ่มทำงาน ..."
+        # text: "พร้อมทำงาน ...\n"
+        font_name: "milk tea-normal.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        pos: 150, 200
 
     Button: 
         size_hint: 0.16, 0.18
@@ -372,7 +386,7 @@ WindowManager:
         pos: 180, 345
 
     Label:
-        text: "%s" % (root.general_plastic_pie)
+        text: "%s" % (root.plastic_pie)
         font_name: "ChulabhornLikitText-Medium.otf"
         font_size:"44sp"
         text_size: None, self.height
@@ -381,7 +395,7 @@ WindowManager:
         pos: 545, 375
 
     Label:
-        text: "%s" % (root.clear_plastic_pie)
+        text: "%s" % (root.pet_pie)
         font_name: "ChulabhornLikitText-Medium.otf"
         font_size:"44sp"
         text_size: None, self.height
@@ -390,7 +404,7 @@ WindowManager:
         pos: 545, 285
 
     Label:
-        text: "%s" % (root.caned_pie)
+        text: "%s" % (root.can_pie)
         font_name: "ChulabhornLikitText-Medium.otf"
         font_size:"44sp"
         text_size: None, self.height
@@ -399,7 +413,7 @@ WindowManager:
         pos: 545, 195
 
     Label:
-        text: "%s" % (root.unknown_pie)
+        text: "%s" % (root.trash_pie)
         font_name: "ChulabhornLikitText-Medium.otf"
         font_size:"44sp"
         text_size: None, self.height
@@ -426,7 +440,218 @@ WindowManager:
         pos: 135, 100
 
 
-<ProcessScreen>:
+<ProcessScreen1>:
+    Image:
+        source: "ProcessScreen.png"
+
+    Button: 
+        size_hint: 0.18, 0.2
+        pos: 26, 7
+        background_normal: 'lock_btn_rubbish.png'
+        background_down: 'lock_btn_rubbish.png'
+
+    Button: 
+        size_hint: 0.18, 0.12
+        pos: 197, 24
+        background_normal: 'lookscore_blind.png'
+        background_down: 'lookscore_blind.png'
+
+    Label:
+        text: "%s" % (root.Date)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 105, 425
+
+    Label:
+        text: "%s" % (root.Time)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 240, 425
+
+    Label:
+        text: "%s" % (root.User)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 180, 345
+
+    Label:
+        text: "%s" % (root.plastic_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 375
+
+    Label:
+        text: "%s" % (root.pet_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 285
+
+    Label:
+        text: "%s" % (root.can_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 195
+
+    Label:
+        text: "%s" % (root.trash_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 105
+
+    Label:
+        text: "%s" % (root.sum_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 550, 20
+
+    Label:
+        text: "%s" % (root.time_left)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 135, 100
+
+<ReadyScreen2>:
+    Image:
+        source: "ReadyScreen2.png"
+
+    Button: 
+        size_hint: 0.16, 0.18
+        pos: 50, 18
+        background_normal: 'collect.png'
+        background_down: 'collect.png'
+        on_release: root.collect()
+            # root.startprocess()
+        # on_press: 
+            # root.startprocess()
+            # root.collect()
+
+    # Label:
+    #     # text: "%s" % (root.general_plastic_cc_cap)
+    #     # text: "กดปุ่มแลกขยะ\nเพื่อเริ่มทำงาน ..."
+    #     text: "พร้อมทำงาน ...\n"
+    #     font_name: "milk tea-normal.ttf"
+    #     font_size:"34sp"
+    #     text_size: None, self.height
+    #     size_hint_x: None
+    #     pos: 150, 200
+
+    Button: 
+        size_hint: 0.16, 0.18
+        pos: 200, 18
+        background_normal: 'lookscore.png'
+        background_down: 'lookscore.png'
+        on_release: root.lookscore()
+
+    Label:
+        text: "%s" % (root.Date)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 105, 425
+
+    Label:
+        text: "%s" % (root.Time)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 240, 425
+
+    Label:
+        text: "%s" % (root.User)
+        font_name: "THSarabun Bold.ttf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 180, 345
+
+    Label:
+        text: "%s" % (root.plastic_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 375
+
+    Label:
+        text: "%s" % (root.pet_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 285
+
+    Label:
+        text: "%s" % (root.can_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 195
+
+    Label:
+        text: "%s" % (root.trash_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#ffffff")
+        pos: 545, 105
+
+    Label:
+        text: "%s" % (root.sum_pie)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"44sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 550, 20
+    
+    Label:
+        text: "%s" % (root.time_left)
+        font_name: "ChulabhornLikitText-Medium.otf"
+        font_size:"34sp"
+        text_size: None, self.height
+        size_hint_x: None
+        color: rgba("#000000")
+        pos: 135, 100
+
+
+<ProcessScreen2>:
     Image:
         source: "ProcessScreen.png"
 
@@ -470,7 +695,7 @@ WindowManager:
         pos: 180, 345
 
     Label:
-        text: "%s" % (root.general_plastic_pie)
+        text: "%s" % (root.plastic_pie)
         font_name: "ChulabhornLikitText-Medium.otf"
         font_size:"44sp"
         text_size: None, self.height
@@ -479,7 +704,7 @@ WindowManager:
         pos: 545, 375
 
     Label:
-        text: "%s" % (root.clear_plastic_pie)
+        text: "%s" % (root.pet_pie)
         font_name: "ChulabhornLikitText-Medium.otf"
         font_size:"44sp"
         text_size: None, self.height
@@ -488,7 +713,7 @@ WindowManager:
         pos: 545, 285
 
     Label:
-        text: "%s" % (root.caned_pie)
+        text: "%s" % (root.can_pie)
         font_name: "ChulabhornLikitText-Medium.otf"
         font_size:"44sp"
         text_size: None, self.height
@@ -497,7 +722,7 @@ WindowManager:
         pos: 545, 195
 
     Label:
-        text: "%s" % (root.unknown_pie)
+        text: "%s" % (root.trash_pie)
         font_name: "ChulabhornLikitText-Medium.otf"
         font_size:"44sp"
         text_size: None, self.height
@@ -543,3 +768,25 @@ WindowManager:
         size_hint_x: None
         color: rgba("#000000")
         pos: 350, 245
+
+
+<thank_screen>:
+    Image:
+        source: "thank_screen.png"
+
+
+<video_screen>:
+    source: "NSC2020.mp4"
+    state: "%s" % (root.state)
+    options: {'eos': 'loop'}
+    allow_stretch: True
+    volume: 0.8 # 0-1
+    # play: True
+
+    Button: 
+        size_hint: 200, 200
+        # pos: 320, 120
+        background_color: 0, 0, 0, 0
+        # background_normal: 'confirm.png'
+        # background_down: 'confirm.png'
+        on_release: root.btn_click()

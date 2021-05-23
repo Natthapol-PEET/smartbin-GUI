@@ -24,7 +24,8 @@ def login_uname(uname):
 def decode_token(access_token):
     data = access_token.split('.')[1]
     byte = base64.b64decode(data + '=' * (-len(data) % 4))
-    uname = json.loads(byte)['name'][1:]
+    # uname = json.loads(byte)['name'][1:]
+    uname = json.loads(byte)['name']
 
     return uname
 
@@ -53,20 +54,25 @@ def get_qrcode_accessTK():
 
     res = requests.get(url, headers=headers, verify=False)
 
+    # user scan qr-coded
     if 'access_token' in res.text:
         access_token = json.loads(res.text)['access_token']
         return access_token
+    # wait user to scan qr-code
     else:
         return -1
 
-def update_bin(unknown_type_cc, canned_cc, clear_plastic_cc, general_plastic_cc):
+
+def update_bin(canned_cc_cap, pet_cc_cap, plastic_cc_cap, unknown_cc_cap):
     url = 'https://kusesmartbin.csc.ku.ac.th/api/v1/bin/secret/quantities'
     headers = {
         'X-Bin-ID': config.X_BIN_ID,
         'X-Bin-Client': config.X_BIN_CLIENT
     }
 
-    data = { 'data': '0:'+str(unknown_type_cc)+'/1:'+str(canned_cc)+'/2:'+str(clear_plastic_cc)+'/3:'+str(general_plastic_cc)+'' }
+    data = { 'data': '0:'+str(canned_cc_cap)+'/1:'+str(pet_cc_cap)+ \
+        '/2:'+str(plastic_cc_cap)+'/3:'+str(unknown_cc_cap)+'' }
+
     requests.post(url, headers=headers, json=data, verify=False)
 
 def report_error():
@@ -93,11 +99,12 @@ def get_data_type():
     res = requests.get(url, headers=headers, verify=False)
     data = json.loads(res.text)['data']
 
-    points, names = [], []
-    for x in data:
-        names.append(x['name'])
-        points.append(x['points'])
-    return names, points
+    # points, names = [], []
+    # for x in data:
+    #     names.append(x['name'])
+    #     points.append(x['points'])
+    # return names, points
+    return data
 
 def prediction_login(image_name, AccessToken):
     url = 'https://kusesmartbin.csc.ku.ac.th/api/prediction/'

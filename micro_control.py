@@ -13,8 +13,9 @@ class micro_control:
     def cap_image(self):
         imgname = self.create_imgname()
 
-        cap = cv2.VideoCapture('http://192.168.0.100:4747/mjpegfeed')          # ios
-        # cap = cv2.VideoCapture('http://192.168.43.224:4747/mjpegfeed')    # android
+        # cap = cv2.VideoCapture(0)   # webcam rpi
+        cap = cv2.VideoCapture('http://192.168.0.100:4747/mjpegfeed')       # android
+        # cap = cv2.VideoCapture('http://192.168.43.224:4747/mjpegfeed')    # ios
         
         cnt = 0
         while cnt < 10:
@@ -40,17 +41,14 @@ class micro_control:
         # image_origin = 'image/1603470042.jpg'
 
         if AccessToken == 'donate':
-            response = prediction_donate(image_grey)
+            response = prediction_donate(image_origin)
             print(response)
         else:
-            response = prediction_login(image_grey, AccessToken)
+            response = prediction_login(image_origin, AccessToken)
 
-        # id = response.json()['id']
-        
-        
+        id = response.json()['id'] - 1
 
-        # return image_grey, id, image_origin
-        return image_grey, 1, image_origin
+        return id, image_grey, image_origin
 
     
 # img_name, imgname_origin = micro_control().cap_image()
