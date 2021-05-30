@@ -46,7 +46,9 @@ class micro_control:
         else:
             response = prediction_login(image_origin, AccessToken)
 
-        id = response.json()['id'] - 1
+        id = response.json()['id']
+
+        print(id)
 
         return id, image_grey, image_origin
 

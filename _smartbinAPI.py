@@ -117,6 +117,7 @@ def prediction_login(image_name, AccessToken):
     image_type = guess_type(image_name)[0]
     files = {'image': (image_name, open(image_name, 'rb'), image_type)}
     res = requests.request('POST', url, files=files, headers=headers, verify=False)
+
     return res
 
 def prediction_donate(image_name):
