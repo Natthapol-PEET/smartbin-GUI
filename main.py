@@ -57,7 +57,7 @@ from sound import play_sound, play_video_create, stop_video_create
 update_data_type()
 
 # Hide mouse cursor on desktop
-Window.show_cursor = True
+Window.show_cursor = False
 
 # Full Screen
 Window.fullscreen = True
@@ -723,7 +723,7 @@ class HomeScreen(Screen):
         reset_db()
 
         # play video
-        # Clock.schedule_once(self.play_video, 8)
+        Clock.schedule_once(self.play_video, 20)
 
         # close box
         close()
