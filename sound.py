@@ -1,5 +1,6 @@
 import pygame
 from threading import Thread
+import config
 
 pygame.mixer.init()
 stop_threads = False
@@ -11,6 +12,7 @@ def play_sound(file):
 
 def start_sound(file):
     pygame.mixer.music.load(file)
+    pygame.mixer.music.set_volume(config.volume)
     pygame.mixer.music.play()
 
     while pygame.mixer.music.get_busy() == True:

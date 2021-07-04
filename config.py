@@ -18,3 +18,7 @@ dataType = [
 # camera_index = "http://192.168.0.100:4747/mjpegfeed"
 camera_index = 1
 
+# config sound
+volume = 0.3
+
+

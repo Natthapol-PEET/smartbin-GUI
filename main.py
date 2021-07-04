@@ -139,7 +139,6 @@ class PointScreen(Screen):
         close()
 
     def btn_home(self):
-        self.soundScore.stop()
         # play_sound('Audacity/16-ยืนยัน.wav')
         sm.transition.direction = "left"
         sm.current = "thank_screen"
@@ -724,7 +723,7 @@ class HomeScreen(Screen):
         reset_db()
 
         # play video
-        Clock.schedule_once(self.play_video, 8)
+        # Clock.schedule_once(self.play_video, 8)
 
         # close box
         close()
