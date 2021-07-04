@@ -1,4 +1,12 @@
+import os
+# Audio setting
+# os.environ['KIVY_AUDIO'] = 'sdl2'
+# os.environ['KIVY_VIDEO'] = 'sdl2'
+
+import kivy 
 from kivy.app import App
+kivy.require('1.9.0')
+
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.core.window import Window
@@ -11,14 +19,18 @@ from kivy.uix.label import Label
 from kivy.properties import StringProperty
 from kivy.uix.image import Image
 from kivy.uix.video import Video
-import os
-import threading
-
-# add sound
+from kivy.uix.popup import Popup
+from kivy.uix.button import Button
 from kivy.core.audio import SoundLoader
-# sound = SoundLoader.load('Audacity/1-เริ่มใช้งาน.wav').play()
-# sound.play()
-# sound.stop()
+from kivy.uix.gridlayout import GridLayout
+# to change the kivy default settings we use this module config
+from kivy.config import Config
+  
+# 0 being off 1 being on as in true / false
+# you can use 0 or 1 && True or False
+# Config.set('graphics', 'resizable', True)
+
+import threading
 
 from DateTime import get_date, get_time, \
     get_start_time, calculate_time, create_timeout
@@ -35,6 +47,10 @@ from config import input_data_len
 from manageTinyDB import update_access_token, get_user_token, \
     get_date_time, get_data_pie, update_data_type, get_calculate_point, \
         get_data_type_from_db, update_data_pie, reset_db
+
+from box import move, close
+from detect_object import background_subtraction
+from send_to_arduino import check_before_send
 
 # init data type 
 update_data_type()
@@ -59,20 +75,37 @@ timeout = create_timeout()
 # current screen
 current_screen = ""
 
+
+
+def alert_popup(desc):
+    layout = GridLayout(cols = 1, padding = 10)
+  
+    popupLabel = Label(text = desc)
+    closeButton = Button(text = "Back to Main page")
+
+    layout.add_widget(popupLabel)
+    layout.add_widget(closeButton)       
+
+    # Instantiate the modal popup and display
+    popup = Popup(title ='Alert',
+                    content = layout,
+                    size_hint =(None, None), size =(400, 200),
+                    separator_color=[47 / 255., 167 / 255., 212 / 255., 1.])  
+    popup.open()   
+
+    # Attach close button press with popup.dismiss action
+    closeButton.bind(on_press=popup.dismiss, state=callback) 
+
+def callback(instance, value):
+    sm.transition.direction = "right"
+    sm.current = "HomeScreen"
+
+
 class video_screen(Screen, Video):
     state = StringProperty()
 
-    # def __init__(self, **kwargs):
-    #     super(video_screen, self).__init__(**kwargs)
-    #     video = Video(source='NSC2020.mp4', state='play')
-
     def on_enter(self, *args):
         self.state = "play"
-    #     self.video = Video(source="sample_1280x720.mkv")
-    #     self.state = "play"
-    #     self.option = {'eos' : 'loop'}
-    #     self.allow_stretch = True
-    #     self.play = True
     
     def btn_click(self):
         sm.transition.direction = "right"
@@ -100,6 +133,9 @@ class PointScreen(Screen):
         # get calculate point from db
         # show point total to screen
         self.total_point = get_calculate_point()
+
+        # close box
+        close()
 
     def btn_home(self):
         self.soundScore.stop()
@@ -183,19 +219,48 @@ class ReadyScreen2(Screen):
         self.Time = get_time()
     
     def micro_working(self):
-        # capture image
-        mc = micro_control()
-        # prediction
-        self.id, self.image_grey, self.image_origin = mc.prediction(self.AccessToken)
-        # remove image origin and gray
-        os.remove(self.image_origin)
-        os.remove(self.image_grey)
+        # detect object
+        state = background_subtraction()
+        print(f"state: {state}")
 
-        # update data in db and update value screen
-        self.caned_pie, self.pet_pie, self.plastic_pie, self.trash_pie, \
-            self.sum_pie = update_data_pie(self.id)
-    
-        self.endprocess()
+        # close box
+        close()
+
+        if state == 1:
+            # prediction
+            self.id, self.image_grey, self.image_origin = micro_control().prediction(self.AccessToken)
+
+            if self.image_grey == -1:
+                alert_popup("Camera not responding \nPlease contact the relevant staff.")
+            else:
+                # remove image origin and gray
+                os.remove(self.image_origin)
+                os.remove(self.image_grey)
+
+                if self.id == -1:   # server not response
+                    alert_popup("Server not responding \nPlease make a new transaction later.")
+                else:
+                    # update data in db and update value screen
+                    self.caned_pie, self.pet_pie, self.plastic_pie, self.trash_pie, \
+                        self.sum_pie = update_data_pie(self.id)
+
+                    # ส่ง id ไปยัง arduino
+                    serial_state = check_before_send(self.id)
+
+                    if not serial_state:
+                        # Error
+                        alert_popup("Serial Error\nPlease contact the relevant staff.")
+
+                    # open box
+                    move()
+
+                self.endprocess()
+
+        elif state == 0:
+            self.endprocess()
+        else:
+            # Error
+            alert_popup("Camera not responding \nPlease contact the relevant staff.")
 
     def collect(self):
         # SoundLoader.load('Audacity/11-แลกเพิ่ม.wav').play()
@@ -297,21 +362,50 @@ class ReadyScreen1(Screen):
     def update_datetime(self, dt):
         self.Date = get_date()
         self.Time = get_time()
-    
-    def micro_working(self):
-        # capture image
-        mc = micro_control()
-        # prediction
-        self.id, self.image_grey, self.image_origin = mc.prediction(self.AccessToken)
-        # remove image origin and gray
-        os.remove(self.image_origin)
-        os.remove(self.image_grey)
 
-        # update data in db and update value screen
-        self.caned_pie, self.pet_pie, self.plastic, \
-            self.trash_pie, self.sum_pie = update_data_pie(self.id)
-    
-        self.endprocess()
+    def micro_working(self):
+        # detect object
+        state = background_subtraction()
+        print(f"state: {state}")
+
+        # close box
+        close()
+
+        if state == 1:
+            # prediction
+            self.id, self.image_grey, self.image_origin = micro_control().prediction(self.AccessToken)
+
+            if self.image_grey == -1:
+                alert_popup("Camera not responding \nPlease contact the relevant staff.")
+            else:
+                # remove image origin and gray
+                os.remove(self.image_origin)
+                os.remove(self.image_grey)
+
+                if self.id == -1:   # server not response
+                    alert_popup("Server not responding \nPlease make a new transaction later.")
+                else:
+                    # update data in db and update value screen
+                    self.caned_pie, self.pet_pie, self.plastic_pie, self.trash_pie, \
+                        self.sum_pie = update_data_pie(self.id)
+
+                    # ส่ง id ไปยัง arduino
+                    serial_state = check_before_send(self.id)
+
+                    if not serial_state:
+                        # Error
+                        alert_popup("Serial Error\nPlease contact the relevant staff.")
+
+                    # open box
+                    move()
+
+                self.endprocess()
+
+        elif state == 0:
+            self.endprocess()
+        else:
+            # Error
+            alert_popup("Camera not responding \nPlease contact the relevant staff.")
 
     def collect(self):
         if self.ready_text == "พร้อมทำงาน ...\n":
@@ -319,9 +413,15 @@ class ReadyScreen1(Screen):
             self.Date = get_date(); self.Time = get_time()
             self.startprocess()
             threading.Thread(target=self.micro_working).start()
-        else:
+        else:    # กดปุ่มแลกขยะเพื่อเริ่มทำงาน
             SoundLoader.load('Audacity/13-พร้อมทำงาน.wav').play()
+            # เปิดถังขยะ
+            threading.Thread(target=self.openbox).start()
+
         self.ready_text = "พร้อมทำงาน ...\n"
+
+    def openbox(self):
+        move()
 
     def startprocess(self):
         sm.transition.direction = "left"
@@ -617,6 +717,8 @@ class HomeScreen(Screen):
         # play video
         Clock.schedule_once(self.play_video, 8)
 
+        # close box
+        close()
 
     def play_video(self, dt):
         if current_screen == "HomeScreen":
