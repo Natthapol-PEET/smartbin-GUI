@@ -28,11 +28,11 @@ def senddata(id):
 
     while True:
         output = ser.readline().decode().rstrip()
-        # output = output.replace("'", '"')
-        # output = json.loads(output)
 
         if output != "":
-            # update_bin(output['can'], output['pete'], output['plastic'], output['other'])
+            output = output.replace("'", '"')
+            output = json.loads(output)
+            update_bin(output['can'], output['pete'], output['plastic'], output['other'])
             print("output :", output)
             break
         

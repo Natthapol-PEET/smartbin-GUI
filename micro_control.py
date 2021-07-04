@@ -19,7 +19,7 @@ class micro_control:
         # cap = cv2.VideoCapture(0)   # webcam rpi
         cap = cv2.VideoCapture(config.camera_index)       # android
         # cap = cv2.VideoCapture('http://192.168.43.224:4747/mjpegfeed')    # ios
-        cap.set(cv2.CAP_PROP_AUTOFOCUS, 0);
+        cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
         cap.set(cv2.CAP_PROP_EXPOSURE, 25)
         
         cnt = 0
