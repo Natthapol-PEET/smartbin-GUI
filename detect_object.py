@@ -108,3 +108,9 @@ def background_subtraction():
             return 1
             break
             
+'''
+
+def background_subtraction():
+	return 1
+
+'''

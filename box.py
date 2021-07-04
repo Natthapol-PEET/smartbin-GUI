@@ -1,3 +1,4 @@
+
 import RPi.GPIO as GPIO
 import time
 
@@ -33,4 +34,8 @@ def move():
 
 def close():
     print("close")
+
+def off_light():
+    print("off_light")
+
 '''

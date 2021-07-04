@@ -21,7 +21,6 @@ from kivy.uix.image import Image
 from kivy.uix.video import Video
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
-from kivy.core.audio import SoundLoader
 from kivy.uix.gridlayout import GridLayout
 # to change the kivy default settings we use this module config
 from kivy.config import Config
@@ -51,6 +50,8 @@ from manageTinyDB import update_access_token, get_user_token, \
 from box import move, close, off_light
 from detect_object import background_subtraction
 from send_to_arduino import check_before_send
+
+from sound import play_sound, play_video_create, stop_video_create
 
 # init data type 
 update_data_type()
@@ -112,6 +113,7 @@ class video_screen(Screen, Video):
         sm.current = "HomeScreen"
         # stop video
         self.state = "stop"
+        # stop_video_create()
 
 
 class thank_screen(Screen):
@@ -120,7 +122,7 @@ class thank_screen(Screen):
         sm.current = "HomeScreen"
 
     def on_enter(self, *args):
-        SoundLoader.load('Audacity/17-ขอบคุณค่ะ.wav').play()
+        play_sound('Audacity/17-ขอบคุณค่ะ.wav')
         Clock.schedule_once(self.my_callback, 3)
 
 
@@ -128,8 +130,7 @@ class PointScreen(Screen):
     total_point = StringProperty()
 
     def on_enter(self, *args):
-        self.soundScore = SoundLoader.load('Audacity/15-คะแนนสะสมครั้งนี้.wav')
-        self.soundScore.play()
+        play_sound('Audacity/15-คะแนนสะสมครั้งนี้.wav')
         # get calculate point from db
         # show point total to screen
         self.total_point = get_calculate_point()
@@ -139,7 +140,7 @@ class PointScreen(Screen):
 
     def btn_home(self):
         self.soundScore.stop()
-        # SoundLoader.load('Audacity/16-ยืนยัน.wav').play()
+        # play_sound('Audacity/16-ยืนยัน.wav')
         sm.transition.direction = "left"
         sm.current = "thank_screen"
 
@@ -156,7 +157,7 @@ class ProcessScreen2(Screen):
     time_left = StringProperty('14.19')
 
     def on_enter(self, *args):
-        SoundLoader.load('Audacity/14-กำลังประมวลผล.wav').play()
+        play_sound('Audacity/14-กำลังประมวลผล.wav')
         # get user from db
         self.User, _ = get_user_token()
         # get date time from db
@@ -193,7 +194,7 @@ class ReadyScreen2(Screen):
 
     def on_enter(self, *args):
         if self.sum_pie != "0":
-            SoundLoader.load('Audacity/13-พร้อมทำงาน.wav').play()
+            play_sound('Audacity/13-พร้อมทำงาน.wav')
         self.User, self.AccessToken = get_user_token()
 
         # reload datetime
@@ -265,7 +266,7 @@ class ReadyScreen2(Screen):
             alert_popup("Camera not responding \nPlease contact the relevant staff.")
 
     def collect(self):
-        # SoundLoader.load('Audacity/11-แลกเพิ่ม.wav').play()
+        # play_sound('Audacity/11-แลกเพิ่ม.wav')
 
         # update date/time on screen
         self.Date = get_date(); self.Time = get_time()
@@ -288,7 +289,7 @@ class ReadyScreen2(Screen):
         self.sum_pie = "0"
 
     def lookscore(self):
-        SoundLoader.load('Audacity/12-ดูคะแนน.wav').play()
+        play_sound('Audacity/12-ดูคะแนน.wav')
         
         # ปิดไฟ
         off_light()
@@ -310,7 +311,7 @@ class ProcessScreen1(Screen):
     time_left = StringProperty('14.19')
 
     def on_enter(self, *args):
-        SoundLoader.load('Audacity/14-กำลังประมวลผล.wav').play()
+        play_sound('Audacity/14-กำลังประมวลผล.wav')
         # get user from db
         self.User, _ = get_user_token()
         # get time from db
@@ -422,7 +423,7 @@ class ReadyScreen1(Screen):
             self.startprocess()
             threading.Thread(target=self.micro_working).start()
         else:    # กดปุ่มแลกขยะเพื่อเริ่มทำงาน
-            SoundLoader.load('Audacity/13-พร้อมทำงาน.wav').play()
+            play_sound('Audacity/13-พร้อมทำงาน.wav')
             # เปิดถังขยะ
             # threading.Thread(target=self.openbox).start()
 
@@ -449,7 +450,7 @@ class ReadyScreen1(Screen):
         self.sum_pie = "0"
 
     def lookscore(self):
-        SoundLoader.load('Audacity/12-ดูคะแนน.wav').play()
+        play_sound('Audacity/12-ดูคะแนน.wav')
 
         self.reset()
         sm.transition.direction = "left"
@@ -504,7 +505,7 @@ class EnterIDScreen(Screen):
             self.sid += '0'
 
     def delete(self):
-        SoundLoader.load('Audacity/9-ลบ.wav').play()
+        play_sound('Audacity/9-ลบ.wav')
 
         stdOddlen = len(self.sid)
         if stdOddlen != 0:
@@ -513,7 +514,7 @@ class EnterIDScreen(Screen):
     def ok(self):
         global start_time
 
-        SoundLoader.load('Audacity/10-ตกลง.wav').play()
+        play_sound('Audacity/10-ตกลง.wav')
 
         # login by student id -> get access token
         access_token = login_uname( 'b' + self.sid )
@@ -533,7 +534,7 @@ class EnterIDScreen(Screen):
         self.sid = ''
 
     def btn_back(self):
-        SoundLoader.load('Audacity/4-ย้อนกลับ.wav').play()
+        play_sound('Audacity/4-ย้อนกลับ.wav')
         self.sid = ''
         sm.transition.direction = "right"
         sm.current = "LoginScreen"
@@ -590,21 +591,21 @@ class QRcodeScreen(Screen):
         login_qrCode()
 
     def btn_back(self):
-        SoundLoader.load('Audacity/4-ย้อนกลับ.wav').play()
+        play_sound('Audacity/4-ย้อนกลับ.wav')
         sm.transition.direction = "right"
         sm.current = "LoginScreen"
 
 
 class InvalidScreen(Screen):
     def btn_back(self):
-        SoundLoader.load('Audacity/4-ย้อนกลับ.wav').play()
+        play_sound('Audacity/4-ย้อนกลับ.wav')
         sm.transition.direction = "right"
         sm.current = "EnterIDScreen"
 
 
 class LoginScreen(Screen):
     def btn_byQRcode(self):
-        SoundLoader.load('Audacity/7-scan-QR-Code.wav').play()
+        play_sound('Audacity/7-scan-QR-Code.wav')
         # load qr-code from smartbin api 
         login_qrCode()
 
@@ -612,33 +613,33 @@ class LoginScreen(Screen):
         sm.current = "QRcodeScreen"
 
     def btn_byID(self):
-        SoundLoader.load('Audacity/8-ป้อนรหัสนิสิต.wav').play()
+        play_sound('Audacity/8-ป้อนรหัสนิสิต.wav')
         sm.transition.direction = "left"
         sm.current = "EnterIDScreen"
 
     def btn_back(self):
-        SoundLoader.load('Audacity/4-ย้อนกลับ.wav').play()
+        play_sound('Audacity/4-ย้อนกลับ.wav')
         sm.transition.direction = "right"
         sm.current = "ExScreen"
 
 
 class HowToScreen(Screen):
     def btn_back(self):
-        SoundLoader.load('Audacity/4-ย้อนกลับ.wav').play()
+        play_sound('Audacity/4-ย้อนกลับ.wav')
         sm.transition.direction = "right"
         sm.current = "MenuScreen"
 
 
 class ExScreen(Screen):
     def btn_collect(self):
-        SoundLoader.load('Audacity/5-สะสมแต้ม.wav').play()
+        play_sound('Audacity/5-สะสมแต้ม.wav')
         sm.transition.direction = "left"
         sm.current = "LoginScreen"
 
     def btn_donate(self):
         global start_time
 
-        SoundLoader.load('Audacity/6-บริจาค.wav').play()
+        play_sound('Audacity/6-บริจาค.wav')
 
         # update user in db
         update_access_token('donate', 'donate')
@@ -649,7 +650,7 @@ class ExScreen(Screen):
         start_time = get_start_time()
         
     def btn_back(self):
-        SoundLoader.load('Audacity/4-ย้อนกลับ.wav').play()
+        play_sound('Audacity/4-ย้อนกลับ.wav')
         sm.transition.direction = "right"
         sm.current = "MenuScreen"
 
@@ -676,17 +677,17 @@ class MenuScreen(Screen):
         current_screen = "MenuScreen"
 
     def btn_ex(self):
-        SoundLoader.load('Audacity/2-แลกขยะ.wav').play()
+        play_sound('Audacity/2-แลกขยะ.wav')
         sm.transition.direction = "left"
         sm.current = "ExScreen"
 
     def btn_howto(self):
-        SoundLoader.load('Audacity/3-วิธีใช้.wav').play()
+        play_sound('Audacity/3-วิธีใช้.wav')
         sm.transition.direction = "left"
         sm.current = "HowToScreen"
 
     def btn_back(self):
-        SoundLoader.load('Audacity/4-ย้อนกลับ.wav').play()
+        play_sound('Audacity/4-ย้อนกลับ.wav')
         sm.transition.direction = "right"
         sm.current = "HomeScreen"
 
@@ -723,7 +724,7 @@ class HomeScreen(Screen):
         reset_db()
 
         # play video
-        # Clock.schedule_once(self.play_video, 8)
+        Clock.schedule_once(self.play_video, 8)
 
         # close box
         close()
@@ -732,12 +733,14 @@ class HomeScreen(Screen):
         off_light()
 
     def play_video(self, dt):
+        # play_video_create("Audacity/NSC2020.wav")
+
         if current_screen == "HomeScreen":
             sm.transition.direction = "left"
             sm.current = "video_screen"
 
     def btn_start(self):
-        SoundLoader.load('Audacity/1-เริ่มใช้งาน.wav').play()
+        play_sound('Audacity/1-เริ่มใช้งาน.wav')
         sm.transition.direction = "left"
         # sm.transition = NoTransition()
         sm.current = "MenuScreen"
