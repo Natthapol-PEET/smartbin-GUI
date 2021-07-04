@@ -2,6 +2,8 @@ import os
 from time import sleep
 from serial import Serial
 import json
+from _smartbinAPI import update_bin
+import json
 
 def senddata(id):
     port = '/dev/ttyUSB0'
@@ -20,15 +22,17 @@ def senddata(id):
     sleep(2)
 
     # send = str(input("type : ")) + '\n'
-    send = f"type : {id}\n"
+    send = f"{id}\n"
 
     ser.write(send.encode())
 
     while True:
         output = ser.readline().decode().rstrip()
+        # output = output.replace("'", '"')
+        # output = json.loads(output)
 
-        if True:
-        # if output == ___:
+        if output != "":
+            # update_bin(output['can'], output['pete'], output['plastic'], output['other'])
             print("output :", output)
             break
         

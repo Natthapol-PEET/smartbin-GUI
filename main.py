@@ -48,7 +48,7 @@ from manageTinyDB import update_access_token, get_user_token, \
     get_date_time, get_data_pie, update_data_type, get_calculate_point, \
         get_data_type_from_db, update_data_pie, reset_db
 
-from box import move, close
+from box import move, close, off_light
 from detect_object import background_subtraction
 from send_to_arduino import check_before_send
 
@@ -59,7 +59,7 @@ update_data_type()
 Window.show_cursor = True
 
 # Full Screen
-Window.fullscreen = False
+Window.fullscreen = True
 # Window.fullscreen = 'auto'
 
 # Set windows size
@@ -219,6 +219,8 @@ class ReadyScreen2(Screen):
         self.Time = get_time()
     
     def micro_working(self):
+        move()
+        
         # detect object
         state = background_subtraction()
         print(f"state: {state}")
@@ -234,8 +236,8 @@ class ReadyScreen2(Screen):
                 alert_popup("Camera not responding \nPlease contact the relevant staff.")
             else:
                 # remove image origin and gray
-                os.remove(self.image_origin)
-                os.remove(self.image_grey)
+                # os.remove(self.image_origin)
+                # os.remove(self.image_grey)
 
                 if self.id == -1:   # server not response
                     alert_popup("Server not responding \nPlease make a new transaction later.")
@@ -252,7 +254,7 @@ class ReadyScreen2(Screen):
                         alert_popup("Serial Error\nPlease contact the relevant staff.")
 
                     # open box
-                    move()
+                    # move()
 
                 self.endprocess()
 
@@ -287,6 +289,9 @@ class ReadyScreen2(Screen):
 
     def lookscore(self):
         SoundLoader.load('Audacity/12-ดูคะแนน.wav').play()
+        
+        # ปิดไฟ
+        off_light()
 
         self.reset()
         sm.transition.direction = "left"
@@ -342,6 +347,8 @@ class ReadyScreen1(Screen):
         super(ReadyScreen1, self).__init__(**kwargs)
 
     def on_enter(self, *args):
+        self.ready_text = "กดปุ่มแลกขยะ\nเพื่อเริ่มทำงาน ..."
+        
         # get user and access token in db
         self.User, self.AccessToken = get_user_token()
 
@@ -364,6 +371,7 @@ class ReadyScreen1(Screen):
         self.Time = get_time()
 
     def micro_working(self):
+        move()
         # detect object
         state = background_subtraction()
         print(f"state: {state}")
@@ -379,8 +387,8 @@ class ReadyScreen1(Screen):
                 alert_popup("Camera not responding \nPlease contact the relevant staff.")
             else:
                 # remove image origin and gray
-                os.remove(self.image_origin)
-                os.remove(self.image_grey)
+                # os.remove(self.image_origin)
+                # os.remove(self.image_grey)
 
                 if self.id == -1:   # server not response
                     alert_popup("Server not responding \nPlease make a new transaction later.")
@@ -397,7 +405,7 @@ class ReadyScreen1(Screen):
                         alert_popup("Serial Error\nPlease contact the relevant staff.")
 
                     # open box
-                    move()
+                    # move()
 
                 self.endprocess()
 
@@ -416,7 +424,7 @@ class ReadyScreen1(Screen):
         else:    # กดปุ่มแลกขยะเพื่อเริ่มทำงาน
             SoundLoader.load('Audacity/13-พร้อมทำงาน.wav').play()
             # เปิดถังขยะ
-            threading.Thread(target=self.openbox).start()
+            # threading.Thread(target=self.openbox).start()
 
         self.ready_text = "พร้อมทำงาน ...\n"
 
@@ -705,7 +713,7 @@ class HomeScreen(Screen):
         self.trash_cc_cap = 'ขยะทั่วไป '+ str(trash_cc) +' %'
 
         # update Tank capacity
-        update_bin(can_cc, pet_cc, plastic_cc, trash_cc)
+        # update_bin(can_cc, pet_cc, plastic_cc, trash_cc)
 
     def on_enter(self, *args):
         global current_screen
@@ -715,10 +723,13 @@ class HomeScreen(Screen):
         reset_db()
 
         # play video
-        Clock.schedule_once(self.play_video, 8)
+        # Clock.schedule_once(self.play_video, 8)
 
         # close box
         close()
+        
+        # ปิดไฟ
+        off_light()
 
     def play_video(self, dt):
         if current_screen == "HomeScreen":

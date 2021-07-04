@@ -1,10 +1,11 @@
+'''
 import cv2
 import time
 import numpy as np
 import config
 
 image_size = (100, 100)
-area_offset = [300, 1500]
+area_offset = [300, 1500]     # 0 - 10000 (100*100)
 timeout = 10000
 
 def background_subtraction():
@@ -53,3 +54,57 @@ def background_subtraction():
 
 	time.sleep(3)
 	return state
+	
+'''
+
+
+import RPi.GPIO as GPIO
+import time
+ 
+GPIO.setmode(GPIO.BCM)
+ 
+GPIO_TRIGGER = 18
+GPIO_ECHO = 24
+ 
+GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+GPIO.setup(GPIO_ECHO, GPIO.IN)
+ 
+def distance():
+    GPIO.output(GPIO_TRIGGER, True)
+ 
+    time.sleep(0.00001)
+    GPIO.output(GPIO_TRIGGER, False)
+ 
+    StartTime = time.time()
+    StopTime = time.time()
+ 
+    while GPIO.input(GPIO_ECHO) == 0:
+        StartTime = time.time()
+ 
+    while GPIO.input(GPIO_ECHO) == 1:
+        StopTime = time.time()
+ 
+    TimeElapsed = StopTime - StartTime
+    distance = (TimeElapsed * 34300) / 2
+ 
+
+    return distance
+ 
+
+def background_subtraction():
+    start_time = time.time()
+    
+    while True:
+        dist = distance()
+        print ("Measured Distance = ", dist, " cm")
+        time.sleep(1)
+        
+        if time.time() - start_time > 10:
+            return 0
+            break
+        
+        if dist < 30:
+            time.sleep(2)
+            return 1
+            break
+            

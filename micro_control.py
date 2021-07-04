@@ -3,6 +3,7 @@ import time
 import requests
 from _smartbinAPI import prediction_donate, prediction_login
 import config
+import os
 
 class micro_control:
     def create_imgname(self):
@@ -12,16 +13,22 @@ class micro_control:
         return imgname
 
     def cap_image(self):
+        print("cap image")
         imgname = self.create_imgname()
 
         # cap = cv2.VideoCapture(0)   # webcam rpi
         cap = cv2.VideoCapture(config.camera_index)       # android
         # cap = cv2.VideoCapture('http://192.168.43.224:4747/mjpegfeed')    # ios
+        cap.set(cv2.CAP_PROP_AUTOFOCUS, 0);
+        cap.set(cv2.CAP_PROP_EXPOSURE, 25)
         
         cnt = 0
-        while cnt < 10:
+        while cnt < 5:
             ret, frame = cap.read()
             cnt += 1
+        
+        
+        # ret, frame = cap.read()
 
         if ret:
             image_origin = 'image/' + 'origin-' + imgname.split('.')[0] + '.jpg'
@@ -33,7 +40,13 @@ class micro_control:
         else:
             image_grey = -1
             image_origin = -1
-
+        '''
+        
+        image_origin = 'image/' + 'origin-' + imgname.split('.')[0] + '.jpg'
+        image_grey = 'image/' + 'grey-' + imgname
+        os.system('sudo fswebcam -S 20 --no-banner -d /dev/video1 -r 1280x720 ' + image_origin)
+        os.system('sudo fswebcam -S 20 --no-banner -d /dev/video1 -r 1280x720 ' + image_grey)
+        '''
         cap.release()
         cv2.destroyAllWindows()
 
@@ -56,7 +69,7 @@ class micro_control:
 
             id = response.json()['id']
 
-            print(id)
+            print(f"id: {id}")
 
         return id, image_grey, image_origin
 
