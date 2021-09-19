@@ -39,22 +39,19 @@ from micro_control import micro_control
 # from firebase_storage import upload_preds, upload_origin
 
 from _smartbinAPI import login_uname, login_qrCode, get_qrcode_accessTK, \
-                            decode_token, update_bin, get_data_type
+                            decode_token, get_data_type
 
 from config import input_data_len
 
 from manageTinyDB import update_access_token, get_user_token, \
     get_date_time, get_data_pie, update_data_type, get_calculate_point, \
-        get_data_type_from_db, update_data_pie, reset_db
+        get_data_type_from_db, update_data_pie, reset_db, get_cc
 
-from box import move, close, off_light
-from detect_object import background_subtraction
+from box import move, close, off_light, on_light
+from detect_object import distance
 from send_to_arduino import check_before_send
 
 from sound import play_sound, play_video_create, stop_video_create
-
-# init data type 
-update_data_type()
 
 # Hide mouse cursor on desktop
 Window.show_cursor = False
@@ -75,7 +72,6 @@ timeout = create_timeout()
 
 # current screen
 current_screen = ""
-
 
 
 def alert_popup(desc):
@@ -102,18 +98,40 @@ def callback(instance, value):
     sm.current = "HomeScreen"
 
 
-class video_screen(Screen, Video):
-    state = StringProperty()
+# class video_screen(Screen, Video):
+#     state = StringProperty()
 
-    def on_enter(self, *args):
-        self.state = "play"
+#     def on_enter(self, *args):
+#         self.state = "play"
     
-    def btn_click(self):
-        sm.transition.direction = "right"
-        sm.current = "HomeScreen"
-        # stop video
-        self.state = "stop"
-        # stop_video_create()
+#     def btn_click(self):
+#         sm.transition.direction = "right"
+#         sm.current = "HomeScreen"
+#         # stop video
+#         self.state = "stop"
+#         # stop_video_create()
+
+
+screen_net = False
+
+class NetworkError(Screen):
+    def on_enter(self, *args):
+        global screen_net
+        screen_net = True
+
+        self.SCI = Clock.schedule_interval(self.ping_host, 3)
+
+    def ping_host(self, dt):
+        hostname = "kusesmartbin.csc.ku.ac.th"
+        response = os.system("ping -c 1 " + hostname)
+
+        if response == 0:
+            sm.transition.direction = "right"
+            sm.current = "HomeScreen"
+
+    def on_leave(self):
+        self.SCI.cancel()
+            
 
 
 class thank_screen(Screen):
@@ -123,7 +141,7 @@ class thank_screen(Screen):
 
     def on_enter(self, *args):
         play_sound('Audacity/17-ขอบคุณค่ะ.wav')
-        Clock.schedule_once(self.my_callback, 3)
+        Clock.schedule_once(self.my_callback, 6)
 
 
 class PointScreen(Screen):
@@ -136,17 +154,16 @@ class PointScreen(Screen):
         self.total_point = get_calculate_point()
 
         # close box
-        close()
+        # close()
 
     def btn_home(self):
         # play_sound('Audacity/16-ยืนยัน.wav')
         sm.transition.direction = "left"
         sm.current = "thank_screen"
 
-
-class ProcessScreen2(Screen):
-    Date = StringProperty(0)
-    Time = StringProperty(0)
+class ProcessScreen1(Screen):
+    Date = StringProperty(get_date())
+    Time = StringProperty(get_time())
     User = StringProperty(None)
     can_pie = StringProperty(0)
     pet_pie = StringProperty(0)
@@ -159,162 +176,12 @@ class ProcessScreen2(Screen):
         play_sound('Audacity/14-กำลังประมวลผล.wav')
         # get user from db
         self.User, _ = get_user_token()
-        # get date time from db
-        self.Time, self.Date = get_date_time()
-        # get data type from db
-        self.can_pie, self.pet_pie, self.plastic_pie, \
-            self.trash_pie, self.sum_pie = get_data_pie()
 
-        # reload timeout
-        Clock.schedule_interval(self.calculate_timeout, 1)
-
-    def calculate_timeout(self, dt):
-        global start_time, timeout
-        self.time_left = calculate_time(start_time, timeout)
-
-        if self.time_left == '00:0':
-            sm.transition.direction = "left"
-            sm.current = "thank_screen"
-
-
-class ReadyScreen2(Screen):
-    User = StringProperty(None)
-    Date = StringProperty(get_date())
-    Time = StringProperty(get_time())
-    can_pie = StringProperty(0)
-    pet_pie = StringProperty(0)
-    plastic_pie = StringProperty(0)
-    trash_pie = StringProperty(0)
-    sum_pie = StringProperty(0)
-    time_left = StringProperty('14.30')
-
-    def __init__(self,**kwargs):
-        super(ReadyScreen2, self).__init__(**kwargs)
-
-    def on_enter(self, *args):
-        if self.sum_pie != "0":
-            play_sound('Audacity/13-พร้อมทำงาน.wav')
-        self.User, self.AccessToken = get_user_token()
-
+        # get time from db
+        # self.Time, self.Date = get_date_time()
         # reload datetime
         Clock.schedule_interval(self.update_datetime, 10)
 
-        # reload timeout
-        Clock.schedule_interval(self.calculate_timeout, 1)
-
-        # get data type from db
-        self.can_pie, self.pet_pie, self.plastic_pie, \
-            self.trash_pie, self.sum_pie = get_data_pie()
-
-    def calculate_timeout(self, dt):
-        global start_time, timeout
-        self.time_left = calculate_time(start_time, timeout)
-
-        if self.time_left == '00:0':
-            sm.transition.direction = "left"
-            sm.current = "thank_screen"
-
-    def update_datetime(self, dt):
-        self.Date = get_date()
-        self.Time = get_time()
-    
-    def micro_working(self):
-        move()
-        
-        # detect object
-        state = background_subtraction()
-        print(f"state: {state}")
-
-        # close box
-        close()
-
-        if state == 1:
-            # prediction
-            self.id, self.image_grey, self.image_origin = micro_control().prediction(self.AccessToken)
-
-            if self.image_grey == -1:
-                alert_popup("Camera not responding \nPlease contact the relevant staff.")
-            else:
-                # remove image origin and gray
-                # os.remove(self.image_origin)
-                # os.remove(self.image_grey)
-
-                if self.id == -1:   # server not response
-                    alert_popup("Server not responding \nPlease make a new transaction later.")
-                else:
-                    # update data in db and update value screen
-                    self.caned_pie, self.pet_pie, self.plastic_pie, self.trash_pie, \
-                        self.sum_pie = update_data_pie(self.id)
-
-                    # ส่ง id ไปยัง arduino
-                    serial_state = check_before_send(self.id)
-
-                    if not serial_state:
-                        # Error
-                        alert_popup("Serial Error\nPlease contact the relevant staff.")
-
-                    # open box
-                    # move()
-
-                self.endprocess()
-
-        elif state == 0:
-            self.endprocess()
-        else:
-            # Error
-            alert_popup("Camera not responding \nPlease contact the relevant staff.")
-
-    def collect(self):
-        # play_sound('Audacity/11-แลกเพิ่ม.wav')
-
-        # update date/time on screen
-        self.Date = get_date(); self.Time = get_time()
-        self.startprocess()
-        threading.Thread(target=self.micro_working).start()
-
-    def startprocess(self):
-        sm.transition.direction = "left"
-        sm.current = "ProcessScreen2"
-    
-    def endprocess(self):
-        sm.transition.direction = "right"
-        sm.current = "ReadyScreen2"
-
-    def reset(self):
-        # reset screen
-        self.glass_pie = "0"
-        self.plastic_pie = "0"
-        self.can_pie = "0"
-        self.sum_pie = "0"
-
-    def lookscore(self):
-        play_sound('Audacity/12-ดูคะแนน.wav')
-        
-        # ปิดไฟ
-        off_light()
-
-        self.reset()
-        sm.transition.direction = "left"
-        sm.current = "PointScreen"
-
-
-class ProcessScreen1(Screen):
-    Date = StringProperty(0)
-    Time = StringProperty(0)
-    User = StringProperty(None)
-    can_pie = StringProperty(0)
-    pet_pie = StringProperty(0)
-    plastic_pie = StringProperty(0)
-    trash_pie = StringProperty(0)
-    sum_pie = StringProperty(0)
-    time_left = StringProperty('14.19')
-
-    def on_enter(self, *args):
-        play_sound('Audacity/14-กำลังประมวลผล.wav')
-        # get user from db
-        self.User, _ = get_user_token()
-        # get time from db
-        self.Time, self.Date = get_date_time()
         # get data pie from db
         self.can_pie, self.pet_pie, self.plastic_pie, \
             self.trash_pie, self.sum_pie = get_data_pie()
@@ -326,13 +193,17 @@ class ProcessScreen1(Screen):
         global start_time, timeout
         self.time_left = calculate_time(start_time, timeout)
 
-        if self.time_left == '00:0':
+        if self.time_left == '00:00':
             sm.transition.direction = "left"
             sm.current = "thank_screen"
 
+    def update_datetime(self, dt):
+        self.Date = get_date()
+        self.Time = get_time()
+
 
 class ReadyScreen1(Screen):
-    ready_text = StringProperty("กดปุ่มแลกขยะ\nเพื่อเริ่มทำงาน ...")
+    # ready_text = StringProperty("กดปุ่มแลกขยะ\nเพื่อเริ่มทำงาน ...")
     User = StringProperty(None)
     Date = StringProperty(get_date())
     Time = StringProperty(get_time())
@@ -346,10 +217,23 @@ class ReadyScreen1(Screen):
     def __init__(self,**kwargs):
         super(ReadyScreen1, self).__init__(**kwargs)
 
-    def on_enter(self, *args):
-        self.ready_text = "กดปุ่มแลกขยะ\nเพื่อเริ่มทำงาน ..."
+    # def on_enter(self, *args):
+    #     self.ready_text = "กดปุ่มแลกขยะ\nเพื่อเริ่มทำงาน ..."
         
-        # get user and access token in db
+    #     # get user and access token in db
+    #     self.User, self.AccessToken = get_user_token()
+
+    #     # reload datetime
+    #     Clock.schedule_interval(self.update_datetime, 10)
+
+    #     # reload timeout
+    #     Clock.schedule_interval(self.calculate_timeout, 1)
+
+    
+    def on_enter(self, *args):
+        # if self.sum_pie != "0":
+        play_sound('Audacity/13-พร้อมทำงาน.wav')
+
         self.User, self.AccessToken = get_user_token()
 
         # reload datetime
@@ -357,6 +241,11 @@ class ReadyScreen1(Screen):
 
         # reload timeout
         Clock.schedule_interval(self.calculate_timeout, 1)
+
+        # get data type from db
+        self.can_pie, self.pet_pie, self.plastic_pie, \
+            self.trash_pie, self.sum_pie = get_data_pie()
+
 
     def calculate_timeout(self, dt):
         global start_time, timeout
@@ -373,7 +262,7 @@ class ReadyScreen1(Screen):
     def micro_working(self):
         move()
         # detect object
-        state = background_subtraction()
+        state = distance()
         print(f"state: {state}")
 
         # close box
@@ -383,12 +272,16 @@ class ReadyScreen1(Screen):
             # prediction
             self.id, self.image_grey, self.image_origin = micro_control().prediction(self.AccessToken)
 
+            if self.id == 404:
+                sm.transition.direction = "left"
+                sm.current = "NetworkError"
+            
             if self.image_grey == -1:
                 alert_popup("Camera not responding \nPlease contact the relevant staff.")
             else:
                 # remove image origin and gray
-                # os.remove(self.image_origin)
-                # os.remove(self.image_grey)
+                os.remove(self.image_origin)
+                os.remove(self.image_grey)
 
                 if self.id == -1:   # server not response
                     alert_popup("Server not responding \nPlease make a new transaction later.")
@@ -416,20 +309,12 @@ class ReadyScreen1(Screen):
             alert_popup("Camera not responding \nPlease contact the relevant staff.")
 
     def collect(self):
-        if self.ready_text == "พร้อมทำงาน ...\n":
-            # update date/time on screen
-            self.Date = get_date(); self.Time = get_time()
-            self.startprocess()
-            threading.Thread(target=self.micro_working).start()
-        else:    # กดปุ่มแลกขยะเพื่อเริ่มทำงาน
-            play_sound('Audacity/13-พร้อมทำงาน.wav')
-            # เปิดถังขยะ
-            # threading.Thread(target=self.openbox).start()
+        # update date/time on screen
+        self.Date = get_date(); self.Time = get_time()
+        self.startprocess()
+        threading.Thread(target=self.micro_working).start()
+        play_sound('Audacity/13-พร้อมทำงาน.wav')
 
-        self.ready_text = "พร้อมทำงาน ...\n"
-
-    def openbox(self):
-        move()
 
     def startprocess(self):
         sm.transition.direction = "left"
@@ -438,7 +323,7 @@ class ReadyScreen1(Screen):
     def endprocess(self):
         self.reset()
         sm.transition.direction = "right"
-        sm.current = "ReadyScreen2"
+        sm.current = "ReadyScreen1"
 
     def reset(self):
         # reset value screen
@@ -450,6 +335,9 @@ class ReadyScreen1(Screen):
 
     def lookscore(self):
         play_sound('Audacity/12-ดูคะแนน.wav')
+
+        # ปิดไฟ
+        off_light()
 
         self.reset()
         sm.transition.direction = "left"
@@ -517,6 +405,11 @@ class EnterIDScreen(Screen):
 
         # login by student id -> get access token
         access_token = login_uname( 'b' + self.sid )
+
+        if access_token == 404:
+            sm.transition.direction = "left"
+            sm.current = "NetworkError"
+
         # update user to db
         update_access_token(self.sid, access_token)
 
@@ -565,6 +458,10 @@ class QRcodeScreen(Screen):
         global start_time
         access_token = get_qrcode_accessTK()
 
+        if access_token == 404:
+            sm.transition.direction = "left"
+            sm.current = "NetworkError"
+
         if access_token != -1:
             # decode user from access token
             uname = decode_token(access_token)
@@ -587,7 +484,11 @@ class QRcodeScreen(Screen):
         self.image.reload()
 
     def get_qrCode(self, dt):
-        login_qrCode()
+        statusCode = login_qrCode()
+
+        if statusCode == 404:
+            sm.transition.direction = "left"
+            sm.current = "NetworkError"
 
     def btn_back(self):
         play_sound('Audacity/4-ย้อนกลับ.wav')
@@ -606,7 +507,11 @@ class LoginScreen(Screen):
     def btn_byQRcode(self):
         play_sound('Audacity/7-scan-QR-Code.wav')
         # load qr-code from smartbin api 
-        login_qrCode()
+        statusCode = login_qrCode()
+
+        if statusCode == 404:
+            sm.transition.direction = "left"
+            sm.current = "NetworkError"
 
         sm.transition.direction = "left"
         sm.current = "QRcodeScreen"
@@ -630,8 +535,16 @@ class HowToScreen(Screen):
 
 
 class ExScreen(Screen):
+    def on_enter(self):
+        # off LED
+        off_light()
+
     def btn_collect(self):
         play_sound('Audacity/5-สะสมแต้ม.wav')
+
+        # on LED
+        on_light()
+
         sm.transition.direction = "left"
         sm.current = "LoginScreen"
 
@@ -639,6 +552,9 @@ class ExScreen(Screen):
         global start_time
 
         play_sound('Audacity/6-บริจาค.wav')
+        
+        # on LED
+        on_light()
 
         # update user in db
         update_access_token('donate', 'donate')
@@ -662,14 +578,24 @@ class MenuScreen(Screen):
 
     def __init__(self,**kwargs):
         super(MenuScreen, self).__init__(**kwargs)
+        self.update_points_screen()
+
+
+    def update_points_screen(self):
         # get data type from db
-        names, points = get_data_type_from_db()
-        
+        data_list = get_data_type_from_db()
+
         # update data to screen
-        self.can_point = '  ' + names[0] + '\n' + str(points[0]) + ' คะแนน'
-        self.pet_point = names[1] + '\n  ' + str(points[1]) + ' คะแนน'
-        self.plastic_point = names[2] + '\n' + str(points[2]) + ' คะแนน'
-        self.trash_point = names[3] + '\n  '+str(points[3]) + ' คะแนน'
+        for elem in data_list:
+            if elem["id"] == 0:
+                self.can_point = '  ' + elem["class"] + '\n' + str(elem["points"]) + ' คะแนน'
+            elif elem["id"] == 1:
+                self.pet_point = elem["class"] + '\n  ' + str(elem["points"]) + ' คะแนน'
+            elif elem["id"] == 2:
+                self.plastic_point = elem["class"] + '\n' + str(elem["points"]) + ' คะแนน'
+            elif elem["id"] == 3:
+                self.trash_point = '   ' +elem["class"] + '\n  '+ str(elem["points"]) + ' คะแนน'
+
 
     def on_enter(self, *args):
         global current_screen
@@ -701,44 +627,53 @@ class HomeScreen(Screen):
         super(HomeScreen, self).__init__(**kwargs)
 
         # read capacity form sensor
-        can_cc = 50
-        pet_cc = 30
-        plastic_cc = 40
-        trash_cc = 10
+        cc = get_cc()
+        can_cc = cc[0]['can_cc']
+        pet_cc = cc[0]['pete_cc']
+        plastic_cc = cc[0]['plastic_cc']
+        trash_cc = cc[0]['other_cc']
 
         # update data to screen
-        self.can_cc_cap = 'กระป๋อง '+ str(can_cc) +' %'
-        self.pet_cc_cap = 'พลาสติกใส '+ str(pet_cc) +' %'
-        self.plastic_cc_cap = 'พลาสติกทั่วไป ' + str(plastic_cc) +' %'
-        self.trash_cc_cap = 'ขยะทั่วไป '+ str(trash_cc) +' %'
+        # self.can_cc_cap = ' กระป๋อง '+ '\n   ' + str(can_cc) +' %'
+        # self.pet_cc_cap = 'พลาสติกใส ' + '\n     ' + str(pet_cc) +' %'
+        # self.plastic_cc_cap = 'ขวดพลาสติกขุ่น' + '\n      ' + str(plastic_cc) +' %'
+        # self.trash_cc_cap = '  ขยะทั่วไป '+ '\n    ' + str(trash_cc) +' %'
+        self.can_cc_cap = ' กระป๋อง '+ '\n     ' + ('ว่าง' if can_cc < 90 else 'เต็ม')
+        self.pet_cc_cap = 'พลาสติกใส ' + '\n       ' + ('ว่าง' if pet_cc < 90 else 'เต็ม')
+        self.plastic_cc_cap = 'ขวดพลาสติกขุ่น' + '\n        ' + ('ว่าง' if plastic_cc < 90 else 'เต็ม')
+        self.trash_cc_cap = '  ขยะทั่วไป '+ '\n      ' + ('ว่าง' if trash_cc < 90 else 'เต็ม')
 
-        # update Tank capacity
-        # update_bin(can_cc, pet_cc, plastic_cc, trash_cc)
 
     def on_enter(self, *args):
-        global current_screen
+        global current_screen, screen_net
+
+        screen_net = False
         current_screen = "HomeScreen"
+
+        # init data type 
+        update_data_type()
 
         # reset scroe
         reset_db()
 
         # play video
-        Clock.schedule_once(self.play_video, 20)
+        self.nsc_sound_cancel = Clock.schedule_once(self.play_video, 4)
 
         # close box
         close()
-        
         # ปิดไฟ
         off_light()
 
-    def play_video(self, dt):
-        # play_video_create("Audacity/NSC2020.wav")
 
-        if current_screen == "HomeScreen":
-            sm.transition.direction = "left"
-            sm.current = "video_screen"
+    def play_video(self, dt):
+        if screen_net == False:
+            play_video_create('Audacity/NSC2020.wav')
+
 
     def btn_start(self):
+        self.nsc_sound_cancel.cancel()
+        stop_video_create()
+
         play_sound('Audacity/1-เริ่มใช้งาน.wav')
         sm.transition.direction = "left"
         # sm.transition = NoTransition()
@@ -758,14 +693,18 @@ screens = [HomeScreen(name="HomeScreen"), MenuScreen(name="MenuScreen"),
             LoginScreen(name="LoginScreen"), QRcodeScreen(name="QRcodeScreen"),
             EnterIDScreen(name="EnterIDScreen"), InvalidScreen(name="InvalidScreen"),
             ReadyScreen1(name="ReadyScreen1"), ProcessScreen1(name="ProcessScreen1"), 
-            ReadyScreen2(name="ReadyScreen2"), ProcessScreen2(name="ProcessScreen2"),
             PointScreen(name="PointScreen"), thank_screen(name="thank_screen"),
-            video_screen(name="video_screen")]
+            NetworkError(name="NetworkError")]
 for screen in screens:
     sm.add_widget(screen)
 
-sm.current = "HomeScreen"
-# sm.current = "video_screen"
+# init data type 
+statusCode = update_data_type()
+
+if statusCode == 404:
+    sm.current = "NetworkError"
+else:
+    sm.current = "HomeScreen"
 
 
 class MyMainApp(App):

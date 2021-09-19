@@ -4,6 +4,7 @@ from serial import Serial
 import json
 from _smartbinAPI import update_bin
 import json
+from manageTinyDB import update_cc
 
 def senddata(id):
     port = '/dev/ttyUSB0'
@@ -32,13 +33,18 @@ def senddata(id):
         if output != "":
             output = output.replace("'", '"')
             output = json.loads(output)
+            # [update] send data to server 
             update_bin(output['can'], output['pete'], output['plastic'], output['other'])
+            update_cc(output['can'], output['pete'], output['plastic'], output['other'])
             print("output :", output)
             break
         
 def check_before_send(id):
     try:
-        senddata(id)
+        '''
+            Production
+        '''
+        senddata(id)    
         return True
     except:
         return False

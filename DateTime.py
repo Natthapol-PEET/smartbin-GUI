@@ -22,5 +22,9 @@ def get_end_time():
 def calculate_time(start, timeout):
     result = get_end_time() - start
     time = timeout - result
-    time_str = str(str(time).split(':')[1]) + ':' + str(int(float(str(time).split(':')[2])))
+    time_split = str(time).split(':')
+    minute = str(time_split[1])
+    seconds = str(time_split[2].split('.')[0])
+
+    time_str = minute + ':' + seconds
     return str(time_str)

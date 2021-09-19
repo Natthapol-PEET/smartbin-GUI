@@ -13,7 +13,11 @@ def login_uname(uname):
     }
 
     data = { 'uname': uname }
-    res = requests.post(url, headers=headers, data=data, verify=False)
+    
+    try:
+        res = requests.post(url, headers=headers, data=data, verify=False)
+    except:
+        return 404
 
     if 'access_token' in res.text:
         access_token = json.loads(res.text)['access_token']
@@ -37,7 +41,10 @@ def login_qrCode():
         'Content-Type': 'application/json'
     }
 
-    res = requests.get(url, headers=headers, verify=False)
+    try:
+        res = requests.get(url, headers=headers, verify=False)
+    except:
+        return 404
 
     # get binary and save image
     fp = open("login_qrCode.png", "wb")
@@ -52,7 +59,10 @@ def get_qrcode_accessTK():
         'Content-Type': 'application/json'
     }
 
-    res = requests.get(url, headers=headers, verify=False)
+    try:
+        res = requests.get(url, headers=headers, verify=False)
+    except:
+        return 404
 
     # user scan qr-coded
     if 'access_token' in res.text:
@@ -73,7 +83,10 @@ def update_bin(canned_cc_cap, pet_cc_cap, plastic_cc_cap, unknown_cc_cap):
     data = { 'data': '0:'+str(canned_cc_cap)+'/1:'+str(pet_cc_cap)+ \
         '/2:'+str(plastic_cc_cap)+'/3:'+str(unknown_cc_cap)+'' }
 
-    requests.post(url, headers=headers, json=data, verify=False)
+    try:
+        requests.post(url, headers=headers, json=data, verify=False)
+    except:
+        return 404
 
 def report_error():
     url = 'https://kusesmartbin.csc.ku.ac.th/api/v1/bin/secret/status'
@@ -87,7 +100,10 @@ def report_error():
         "message": "ถังขยะเต็มเฉพาะถังที่ 1" # ไม่สามารถเชื่อมต่อกล้องได้, ถังขยะเต็มเฉพาะถังที่ 1
     }
 
-    requests.post(url, headers=headers, json=data, verify=False)
+    try:
+        requests.post(url, headers=headers, json=data, verify=False)
+    except:
+        return 404
 
 def get_data_type():
     url = 'https://kusesmartbin.csc.ku.ac.th/api/v1/bin/secret/types'
@@ -96,14 +112,13 @@ def get_data_type():
         'X-Bin-Client': config.X_BIN_CLIENT
     }
 
-    res = requests.get(url, headers=headers, verify=False)
+    try:
+        res = requests.get(url, headers=headers, verify=False)
+    except:
+        return 404
+
     data = json.loads(res.text)['data']
 
-    # points, names = [], []
-    # for x in data:
-    #     names.append(x['name'])
-    #     points.append(x['points'])
-    # return names, points
     return data
 
 def prediction_login(image_name, AccessToken):
@@ -116,7 +131,11 @@ def prediction_login(image_name, AccessToken):
 
     image_type = guess_type(image_name)[0]
     files = {'image': (image_name, open(image_name, 'rb'), image_type)}
-    res = requests.request('POST', url, files=files, headers=headers, verify=False)
+
+    try:
+        res = requests.request('POST', url, files=files, headers=headers, verify=False)
+    except:
+        return 404
 
     return res
 
@@ -129,6 +148,11 @@ def prediction_donate(image_name):
 
     image_type = guess_type(image_name)[0]
     files = {'image': (image_name, open(image_name, 'rb'), image_type)}
-    res = requests.request('POST', url, files=files, headers=headers, verify=False)
+    
+    try:
+        res = requests.request('POST', url, files=files, headers=headers, verify=False)
+    except:
+        return 404
+        
     return res
 

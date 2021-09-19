@@ -7,6 +7,7 @@ db = TinyDB('db.json')
 Table_User = db.table('User')
 Table_Data = db.table('Data_Pie')
 Table_Type = db.table('Data_Type')
+Table_CC = db.table('CC')
 Table_DateTime = db.table('DateTime')
 q = Query()
 
@@ -72,18 +73,51 @@ def update_data_pie(id):
 
 def update_data_type():
     data = get_data_type()
+    
+    if data == 404:
+        return 404
+    
     for elem in data:
         Table_Type.update(elem, q.id == elem['id'])
 
+def update_cc(can_cc, pete_cc, plastic_cc, other_cc):
+    # Table_CC.insert({
+    #     "can_cc": can_cc,
+    #     "pete_cc": pete_cc,
+    #     "plastic_cc": plastic_cc,
+    #     "other_cc": other_cc
+    # })
+
+    Table_CC.update({
+        "can_cc": int(can_cc),
+        "pete_cc": int(pete_cc),
+        "plastic_cc": int(plastic_cc),
+        "other_cc": int(other_cc)
+    })
+
+def get_cc():
+    return Table_CC.all()
+
+
 def get_data_type_from_db():
     data = Table_Type.all()
-    points = []
+    data_dict = {}
+    data_list = []
 
-    for elem in data:
-        points.append(elem['points'])
+    for DICT in dataType:
+        for elem in data:
+            if DICT["id"] == elem["id"]:
+                data_dict.update({
+                    "id": DICT["id"],
+                    "class": DICT['class'],
+                    "points": elem['points']
+                })
+                data_list.append(data_dict.copy())
+                # name.append(DICT['class'])
+                # points.append(elem['points'])
 
     # return name and point
-    return dataType, points
+    return data_list
 
 def reset_db():
     Table_Data.update({

@@ -1,0 +1,17 @@
+
+box.py
+    - all
+
+detect_object.py
+    - distance
+    - background_subtraction
+
+main
+    - fullscreen
+    - show_cursor
+
+config
+    - camera_index
+
+send_to_arduino
+    check_before_send

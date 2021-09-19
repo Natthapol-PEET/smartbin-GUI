@@ -16,9 +16,7 @@ class micro_control:
         print("cap image")
         imgname = self.create_imgname()
 
-        # cap = cv2.VideoCapture(0)   # webcam rpi
-        cap = cv2.VideoCapture(config.camera_index)       # android
-        # cap = cv2.VideoCapture('http://192.168.43.224:4747/mjpegfeed')    # ios
+        cap = cv2.VideoCapture(config.camera_index)
         cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
         cap.set(cv2.CAP_PROP_EXPOSURE, 25)
         
@@ -63,9 +61,11 @@ class micro_control:
         else:
             if AccessToken == 'donate':
                 response = prediction_donate(image_origin)
-                print(response)
             else:
                 response = prediction_login(image_origin, AccessToken)
+
+            if response == 404:
+                return 404, 404, 404
 
             id = response.json()['id']
 
