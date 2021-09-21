@@ -32,6 +32,23 @@ def distance():
     distance = (TimeElapsed * 34300) / 2
  
     return distance
+ 
+ def isHaveObject():
+    start_time = time.time()
+    
+    while True:
+        dist = distance()
+        print ("Measured Distance = ", dist, " cm")
+        time.sleep(1)
+        
+        if time.time() - start_time > 10:
+            return 0
+            break
+        
+        if dist < 30:
+            time.sleep(2)
+            return 1
+            break
 
 
 '''
