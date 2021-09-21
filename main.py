@@ -48,7 +48,7 @@ from manageTinyDB import update_access_token, get_user_token, \
         get_data_type_from_db, update_data_pie, reset_db, get_cc
 
 from box import move, close, off_light, on_light
-from detect_object import distance
+from detect_object import isHaveObject
 from send_to_arduino import check_before_send
 
 from sound import play_sound, play_video_create, stop_video_create
@@ -262,7 +262,7 @@ class ReadyScreen1(Screen):
     def micro_working(self):
         move()
         # detect object
-        state = distance()
+        state = isHaveObject()
         print(f"state: {state}")
 
         # close box
