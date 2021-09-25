@@ -7,8 +7,8 @@ import RPi.GPIO as GPIO
  
 GPIO.setmode(GPIO.BCM)
  
-GPIO_TRIGGER = 18
-GPIO_ECHO = 24
+GPIO_TRIGGER = 20
+GPIO_ECHO = 21
  
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
@@ -21,9 +21,12 @@ def distance():
  
     StartTime = time.time()
     StopTime = time.time()
- 
+    
+    begin_time = time.time()
     while GPIO.input(GPIO_ECHO) == 0:
         StartTime = time.time()
+        if time.time() - begin_time > 1:
+            break
  
     while GPIO.input(GPIO_ECHO) == 1:
         StopTime = time.time()
@@ -33,7 +36,7 @@ def distance():
  
     return distance
  
- def isHaveObject():
+def isHaveObject():
     start_time = time.time()
     
     while True:
@@ -45,7 +48,7 @@ def distance():
             return 0
             break
         
-        if dist < 30:
+        if dist < 23:
             time.sleep(2)
             return 1
             break

@@ -21,5 +21,5 @@ dataType = [
 
 
 # camera_index = "http://192.168.43.52:4747/mjpegfeed"
-camera_index = 1
+camera_index = 0
 
