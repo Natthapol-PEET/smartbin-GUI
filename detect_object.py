@@ -34,7 +34,7 @@ def distance():
     TimeElapsed = StopTime - StartTime
     distance = (TimeElapsed * 34300) / 2
  
-    return distance
+    return abs(distance)
  
 def isHaveObject():
     start_time = time.time()

@@ -4,6 +4,7 @@ import requests
 from _smartbinAPI import prediction_donate, prediction_login
 import config
 import os
+import time
 
 class micro_control:
     def create_imgname(self):
@@ -15,9 +16,11 @@ class micro_control:
     def cap_image(self):
         print("cap image")
         imgname = self.create_imgname()
-
+        
         cap = cv2.VideoCapture(config.camera_index)
-        cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+        #cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
         cap.set(cv2.CAP_PROP_EXPOSURE, 25)
         
         cnt = 0

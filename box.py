@@ -31,6 +31,7 @@ def off_light():
 
 def on_light():
     GPIO.output(lightPIN, True)
+    time.sleep(1)
 
 '''
  Production Code

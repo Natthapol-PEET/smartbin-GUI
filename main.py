@@ -141,7 +141,7 @@ class thank_screen(Screen):
 
     def on_enter(self, *args):
         play_sound('Audacity/17-ขอบคุณค่ะ.wav')
-        Clock.schedule_once(self.my_callback, 10)
+        Clock.schedule_once(self.my_callback, 6)
 
 
 class PointScreen(Screen):
